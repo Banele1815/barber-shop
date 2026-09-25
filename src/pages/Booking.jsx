@@ -15,6 +15,82 @@ const barbers = [
   "Mandla",
 ];
 
+const weekdayTimes = [
+  "09:00",
+  "10:00",
+  "11:00",
+  "12:00",
+  "13:00",
+  "14:00",
+  "15:00",
+  "16:00",
+  "17:00",
+];
+
+const saturdayTimes = [
+  "09:00",
+  "10:00",
+  "11:00",
+  "12:00",
+  "13:00",
+  "14:00",
+  "15:00",
+];
+
+function getTodayDate() {
+  const today = new Date();
+
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, "0");
+  const day = String(today.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+}
+
+function getAvailableTimes(date) {
+  if (!date) {
+    return [];
+  }
+
+  const selectedDate = new Date(`${date}T00:00:00`);
+  const day = selectedDate.getDay();
+
+  // Sunday — CLOSED
+  if (day === 0) {
+    return [];
+  }
+
+  let availableTimes;
+
+  // Saturday — closes at 16:00
+  if (day === 6) {
+    availableTimes = saturdayTimes;
+  } else {
+    // Monday-Friday — closes at 18:00
+    availableTimes = weekdayTimes;
+  }
+
+  // If the selected date is today,
+  // remove appointment times that have already passed.
+  if (date === getTodayDate()) {
+    const now = new Date();
+
+    const currentHour = now.getHours();
+    const currentMinutes = now.getMinutes();
+
+    return availableTimes.filter((time) => {
+      const [hour, minutes] = time.split(":").map(Number);
+
+      return (
+        hour > currentHour ||
+        (hour === currentHour && minutes > currentMinutes)
+      );
+    });
+  }
+
+  return availableTimes;
+}
+
 function Booking() {
   const [formData, setFormData] = useState({
     service: "",
@@ -29,45 +105,8 @@ function Booking() {
   const [submitted, setSubmitted] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
 
-  function getAvailableTimes() {
-    if (!formData.date) {
-      return [];
-    }
-
-    const selectedDate = new Date(`${formData.date}T00:00:00`);
-    const day = selectedDate.getDay();
-
-    // Sunday — CLOSED
-    if (day === 0) {
-      return [];
-    }
-
-    // Saturday — 09:00–16:00
-    if (day === 6) {
-      return [
-        "09:00",
-        "10:00",
-        "11:00",
-        "12:00",
-        "13:00",
-        "14:00",
-        "15:00",
-      ];
-    }
-
-    // Monday-Friday — 09:00–18:00
-    return [
-      "09:00",
-      "10:00",
-      "11:00",
-      "12:00",
-      "13:00",
-      "14:00",
-      "15:00",
-      "16:00",
-      "17:00",
-    ];
-  }
+  const today = getTodayDate();
+  const availableTimes = getAvailableTimes(formData.date);
 
   function handleChange(event) {
     const { name, value } = event.target;
@@ -76,6 +115,7 @@ function Booking() {
       ...previous,
       [name]: value,
 
+      // Reset time whenever the date changes
       ...(name === "date" && {
         time: "",
       }),
@@ -85,14 +125,14 @@ function Booking() {
   function handleSubmit(event) {
     event.preventDefault();
 
-    const availableTimes = getAvailableTimes();
+    // Make sure the selected time is still available.
+    const currentAvailableTimes = getAvailableTimes(formData.date);
 
-    if (!availableTimes.includes(formData.time)) {
-      alert("Please select a valid appointment time.");
+    if (!currentAvailableTimes.includes(formData.time)) {
+      alert("Please select a valid available appointment time.");
       return;
     }
 
-    // Show confirmation modal instead of immediately booking
     setShowConfirmation(true);
   }
 
@@ -126,6 +166,7 @@ function Booking() {
     );
 
     const end = new Date(start);
+
     end.setMinutes(end.getMinutes() + 60);
 
     function formatCalendarDate(date) {
@@ -208,6 +249,7 @@ function Booking() {
     const url = URL.createObjectURL(blob);
 
     const link = document.createElement("a");
+
     link.href = url;
     link.download = "wens-barbershop-appointment.ics";
 
@@ -233,6 +275,7 @@ function Booking() {
 
       <section className="booking-section">
         <div className="booking-container">
+
           <div className="booking-intro">
             <p className="section-label">YOUR NEXT LOOK</p>
 
@@ -250,13 +293,19 @@ function Booking() {
           </div>
 
           <div className="booking-form-wrapper">
+
             {!submitted ? (
               <form
                 onSubmit={handleSubmit}
                 className="booking-form"
               >
+
+                {/* SERVICE */}
+
                 <div className="form-group">
-                  <label htmlFor="service">SERVICE</label>
+                  <label htmlFor="service">
+                    SERVICE
+                  </label>
 
                   <select
                     id="service"
@@ -270,15 +319,23 @@ function Booking() {
                     </option>
 
                     {services.map((service) => (
-                      <option key={service} value={service}>
+                      <option
+                        key={service}
+                        value={service}
+                      >
                         {service}
                       </option>
                     ))}
                   </select>
                 </div>
 
+
+                {/* BARBER */}
+
                 <div className="form-group">
-                  <label htmlFor="barber">BARBER</label>
+                  <label htmlFor="barber">
+                    BARBER
+                  </label>
 
                   <select
                     id="barber"
@@ -292,16 +349,25 @@ function Booking() {
                     </option>
 
                     {barbers.map((barber) => (
-                      <option key={barber} value={barber}>
+                      <option
+                        key={barber}
+                        value={barber}
+                      >
                         {barber}
                       </option>
                     ))}
                   </select>
                 </div>
 
+
+                {/* DATE + TIME */}
+
                 <div className="form-row">
+
                   <div className="form-group">
-                    <label htmlFor="date">DATE</label>
+                    <label htmlFor="date">
+                      DATE
+                    </label>
 
                     <input
                       id="date"
@@ -309,12 +375,16 @@ function Booking() {
                       name="date"
                       value={formData.date}
                       onChange={handleChange}
+                      min={today}
                       required
                     />
                   </div>
 
+
                   <div className="form-group">
-                    <label htmlFor="time">TIME</label>
+                    <label htmlFor="time">
+                      TIME
+                    </label>
 
                     <select
                       id="time"
@@ -324,32 +394,44 @@ function Booking() {
                       required
                       disabled={
                         !formData.date ||
-                        getAvailableTimes().length === 0
+                        availableTimes.length === 0
                       }
                     >
+
                       <option value="">
                         {!formData.date
                           ? "Select a date first"
-                          : getAvailableTimes().length === 0
-                            ? "Closed on Sunday"
+                          : availableTimes.length === 0
+                            ? "No times available"
                             : "Select time"}
                       </option>
 
-                      {getAvailableTimes().map((time) => (
-                        <option key={time} value={time}>
+                      {availableTimes.map((time) => (
+                        <option
+                          key={time}
+                          value={time}
+                        >
                           {time}
                         </option>
                       ))}
+
                     </select>
                   </div>
+
                 </div>
+
+
+                {/* YOUR DETAILS */}
 
                 <div className="form-divider">
                   YOUR DETAILS
                 </div>
 
+
                 <div className="form-group">
-                  <label htmlFor="name">FULL NAME</label>
+                  <label htmlFor="name">
+                    FULL NAME
+                  </label>
 
                   <input
                     id="name"
@@ -362,9 +444,13 @@ function Booking() {
                   />
                 </div>
 
+
                 <div className="form-row">
+
                   <div className="form-group">
-                    <label htmlFor="email">EMAIL</label>
+                    <label htmlFor="email">
+                      EMAIL
+                    </label>
 
                     <input
                       id="email"
@@ -377,8 +463,11 @@ function Booking() {
                     />
                   </div>
 
+
                   <div className="form-group">
-                    <label htmlFor="phone">PHONE</label>
+                    <label htmlFor="phone">
+                      PHONE
+                    </label>
 
                     <input
                       id="phone"
@@ -390,7 +479,9 @@ function Booking() {
                       required
                     />
                   </div>
+
                 </div>
+
 
                 <button
                   type="submit"
@@ -398,48 +489,71 @@ function Booking() {
                 >
                   Confirm Appointment
                 </button>
+
               </form>
+
             ) : (
+
+              /* SUCCESS */
+
               <div className="booking-success">
+
                 <p className="section-label">
                   APPOINTMENT REQUEST
                 </p>
 
-                <h2>YOU'RE BOOKED.</h2>
+                <h2>
+                  YOU'RE BOOKED.
+                </h2>
 
                 <p>
                   Your appointment details have been
                   captured successfully.
                 </p>
 
+
                 <div className="booking-summary">
+
                   <div>
                     <span>SERVICE</span>
-                    <strong>{formData.service}</strong>
+                    <strong>
+                      {formData.service}
+                    </strong>
                   </div>
 
                   <div>
                     <span>BARBER</span>
-                    <strong>{formData.barber}</strong>
+                    <strong>
+                      {formData.barber}
+                    </strong>
                   </div>
 
                   <div>
                     <span>DATE</span>
-                    <strong>{formData.date}</strong>
+                    <strong>
+                      {formData.date}
+                    </strong>
                   </div>
 
                   <div>
                     <span>TIME</span>
-                    <strong>{formData.time}</strong>
+                    <strong>
+                      {formData.time}
+                    </strong>
                   </div>
 
                   <div>
                     <span>CLIENT</span>
-                    <strong>{formData.name}</strong>
+                    <strong>
+                      {formData.name}
+                    </strong>
                   </div>
+
                 </div>
 
+
                 <div className="calendar-actions">
+
                   <button
                     type="button"
                     className="btn btn-primary"
@@ -455,74 +569,119 @@ function Booking() {
                   >
                     Add to Apple Calendar
                   </button>
+
                 </div>
+
 
                 <button
                   type="button"
                   className="btn btn-outline"
                   onClick={() => {
                     setSubmitted(false);
+                    setFormData({
+                      service: "",
+                      barber: "",
+                      date: "",
+                      time: "",
+                      name: "",
+                      email: "",
+                      phone: "",
+                    });
                   }}
                 >
                   Make Another Booking
                 </button>
+
               </div>
             )}
+
           </div>
         </div>
       </section>
 
+
       {/* CONFIRMATION MODAL */}
+
       {showConfirmation && (
         <div
           className="booking-modal-overlay"
           onClick={handleCancelConfirmation}
         >
+
           <div
             className="booking-modal"
-            onClick={(event) => event.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            onClick={(event) =>
+              event.stopPropagation()
+            }
           >
+
             <p className="section-label">
               REVIEW YOUR APPOINTMENT
             </p>
 
-            <h2>READY TO BOOK?</h2>
+            <h2>
+              READY TO BOOK?
+            </h2>
 
             <p className="booking-modal-text">
-              Please check your appointment details before
-              confirming.
+              Please check your appointment details
+              before confirming.
             </p>
 
+
             <div className="booking-modal-details">
+
               <div>
                 <span>SERVICE</span>
-                <strong>{formData.service}</strong>
+
+                <strong>
+                  {formData.service}
+                </strong>
               </div>
+
 
               <div>
                 <span>BARBER</span>
-                <strong>{formData.barber}</strong>
+
+                <strong>
+                  {formData.barber}
+                </strong>
               </div>
+
 
               <div>
                 <span>DATE</span>
+
                 <strong>
                   {formatDisplayDate(formData.date)}
                 </strong>
               </div>
 
+
               <div>
                 <span>TIME</span>
-                <strong>{formData.time}</strong>
+
+                <strong>
+                  {formData.time}
+                </strong>
               </div>
+
 
               <div>
                 <span>CLIENT</span>
-                <strong>{formData.name}</strong>
+
+                <strong>
+                  {formData.name}
+                </strong>
               </div>
+
             </div>
 
+
             <div className="booking-modal-actions">
+
               <button
                 type="button"
                 className="btn btn-primary"
@@ -538,10 +697,14 @@ function Booking() {
               >
                 Go Back
               </button>
+
             </div>
+
           </div>
+
         </div>
       )}
+
     </main>
   );
 }
