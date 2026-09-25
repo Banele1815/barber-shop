@@ -12,16 +12,23 @@ import Terms from "./pages/Terms.jsx";
 function App() {
   return (
     <BrowserRouter>
+
       <Navbar />
 
       <Routes>
         <Route path="/" element={<Home />} />
+
         <Route path="/services" element={<Services />} />
-        <Route path="/booking" element={<Booking />} />
+
         <Route path="/about" element={<About />} />
+
+        <Route path="/booking" element={<Booking />} />
+
+        <Route path="/terms" element={<Terms />} />
       </Routes>
 
       <Footer />
+
     </BrowserRouter>
   );
 }
