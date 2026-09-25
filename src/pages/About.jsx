@@ -45,6 +45,46 @@ function About() {
         </div>
       </section>
 
+        <section className="about-barbers section">
+        <div className="section-heading">
+          <p className="section-label">THE TEAM</p>
+
+          <h2>MEET THE BARBERS</h2>
+        </div>
+
+        <div className="barbers-grid">
+          <article>
+            <div className="barber-avatar">B</div>
+            <h3>Banele</h3>
+            <p className="barber-role">Founder &amp; Master Barber</p>
+            <p>
+              Over a decade behind the chair. Known for razor-sharp
+              classic cuts and skin fades with a precise, clean finish.
+            </p>
+          </article>
+
+          <article>
+            <div className="barber-avatar">S</div>
+            <h3>Siyamthanda</h3>
+            <p className="barber-role">Senior Barber</p>
+            <p>
+              The go-to for beard sculpting and detailed line-ups —
+              patient, precise and always thinking about the finish.
+            </p>
+          </article>
+
+          <article>
+            <div className="barber-avatar">T</div>
+            <h3>Thando</h3>
+            <p className="barber-role">Barber</p>
+            <p>
+              Brings a modern eye to classic barbering, with a light
+              touch that makes him a favourite for kids' cuts too.
+            </p>
+          </article>
+        </div>
+      </section>
+
       <section className="about-values section">
         <div className="section-heading">
           <p className="section-label">WHAT WE STAND FOR</p>
