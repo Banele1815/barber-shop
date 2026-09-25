@@ -1,5 +1,4 @@
 import { useState } from "react";
-import Navbar from "../components/Navbar";
 
 const services = [
   "Classic Cut",
@@ -57,8 +56,6 @@ function Booking() {
 
   return (
     <>
-      <Navbar />
-
       <main className="booking-page">
         <section className="page-hero booking-hero">
           <p className="section-label">RESERVE YOUR CHAIR</p>
