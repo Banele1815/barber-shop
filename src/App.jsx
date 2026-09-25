@@ -1,10 +1,9 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-import Home from "./pages/Home";
-import Services from "./pages/Services";
-import About from "./pages/About";
-import Booking from "./pages/Booking";
-import Terms from "./pages/Terms";
+import Home from "./pages/Home.jsx";
+import Services from "./pages/Services.jsx";
+import Booking from "./pages/Booking.jsx";
+import About from "./pages/About.jsx";
 
 function App() {
   return (
@@ -12,9 +11,8 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/services" element={<Services />} />
-        <Route path="/about" element={<About />} />
         <Route path="/booking" element={<Booking />} />
-        <Route path="/terms" element={<Terms />} />
+        <Route path="/about" element={<About />} />
       </Routes>
     </BrowserRouter>
   );
