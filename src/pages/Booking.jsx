@@ -10,9 +10,9 @@ const services = [
 ];
 
 const barbers = [
-  "Thabo",
-  "Lebo",
-  "Mandla",
+  "Banele",
+  "Siyamthanda",
+  "Thando",
 ];
 
 const weekdayTimes = [
