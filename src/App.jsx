@@ -7,6 +7,7 @@ import Home from "./pages/Home.jsx";
 import Services from "./pages/Services.jsx";
 import Booking from "./pages/Booking.jsx";
 import About from "./pages/About.jsx";
+import Terms from "./pages/Terms.jsx";
 
 function App() {
   return (
