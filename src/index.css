@@ -1753,3 +1753,20 @@ main {
     font-size: clamp(50px, 13vw, 75px);
   }
 }
+/* =========================
+   CALENDAR ACTIONS
+========================= */
+
+.calendar-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin: 35px 0 20px;
+}
+
+.calendar-actions .btn {
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  cursor: pointer;
+}
